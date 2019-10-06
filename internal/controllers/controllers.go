@@ -8,7 +8,6 @@ import (
 
 type BaseController struct {
 	client *mongo.Client
-	collection string
 }
 
 func BasicController() string {

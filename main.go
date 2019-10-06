@@ -2,7 +2,9 @@ package main
 
 import(
 	"fmt"
+	"context"
 
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	// "go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -10,6 +12,7 @@ import(
 	"github.com/vasanthpandia/gojournal/internal/config"
 	"github.com/vasanthpandia/gojournal/internal/handlers"
 	"github.com/vasanthpandia/gojournal/internal/server"
+	"github.com/vasanthpandia/gojournal/internal/controllers"
 )
 
 func main() {
@@ -18,32 +21,49 @@ func main() {
 	// fmt.Println(cfg.Mongo.Database)
 
 	srv := server.NewServer()
-	client := getMongoClient(cfg.Mongo)
-	route := *srv.Route
+	client, err := getMongoClient(cfg)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	route := srv.Route
+
 	route.Use(setupControllers(client))
 	route.GET("/test", handlers.BasicHandler)
+	route.POST("/users", handlers.CreateUser)
 	srv.Start()
 }
 
-func setupControllers(client *Mongo.Client) gin.HandlerFunc {
+func setupControllers(client *mongo.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		base := &BaseController {
-			client: client,
-		}
-
-		c.Set("UsersController", base)
+		c.Set("UsersController", &controllers.UsersController{
+			Client: client,
+			Collection: "users",
+		})
+		c.Next()
 	}
 }
 
-func getMongoClient(mongo *config.Config.Mongo) (*Mongo.Client, error) {
+func getMongoClient(cfg *config.Config) (*mongo.Client, error){
 	// Set client options
-	clientOptions := options.Client().ApplyURI(mongo.Url)
+	clientOptions := options.Client().ApplyURI(cfg.Mongo.Url)
 
-	client, err := mongo.Connect(clientOptions)
+	client, err := mongo.Connect(context.TODO(), clientOptions)
 
 	if err != nil {
 		fmt.Println("Unable to Initialize Mongo Client")
+		return nil, err
 	}
 
-	return client
+	// Check the connection
+	err = client.Ping(context.TODO(), nil)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("Connected to MongoDB!")
+
+	return client, nil
 }

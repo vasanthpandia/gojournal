@@ -3,10 +3,16 @@ package controllers
 import (
 	"errors"
 	"github.com/vasanthpandia/gojournal/internal/models"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// type UsersControllerInterface interface {
+// 	Create(payload *UserCreatePayload) (*models.User, error)
+// }
+
 type UsersController struct {
-	BaseController
+	Client *mongo.Client
+	Collection string
 }
 
 type UserCreatePayload struct {
@@ -22,7 +28,7 @@ type UpdatePayload struct {
 	UserCreatePayload
 }
 
-func (uc *UsersController) create(payload UserCreatePayload) (*models.User, error) {
+func (uc *UsersController) Create(payload *UserCreatePayload) (*models.User, error) {
 	if payload.Password != payload.PasswordConfirmation {
 		return nil, errors.New("Password Mismatch")
 	}

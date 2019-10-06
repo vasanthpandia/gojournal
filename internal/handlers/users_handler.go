@@ -8,11 +8,17 @@ import (
 )
 
 func CreateUser(c *gin.Context) {
-	controller := c.MustGet("UsersController")
+	controller := c.MustGet("UsersController").(*controllers.UsersController)
 
-	request := new(controllers.UserCreatePayload)
+	var request controllers.UserCreatePayload
 
-	user, err := controller.Create(request)
+	err := c.BindJSON(request)
+
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Bind Failed")
+	}
+
+	user, err := controller.Create(&request)
 
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
