@@ -2,23 +2,18 @@ package server
 
 import(
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type Server struct {
-	engine *gin.Engine
+	Route *gin.Engine
 }
 
 func NewServer() *Server {
 	return  &Server {
-		engine: gin.Default(),
+		Route: gin.Default(),
 	}
 }
 
 func (srv *Server) Start() {
-	srv.engine.run()
-}
-
-func (srv *Server) SetupHandler(method string, route string, handler *gin.Handler) {
-	srv.engine.addRoute(method, route, handler)
+	srv.Route.Run()
 }
