@@ -3,7 +3,7 @@ package main
 import(
 	"fmt"
 	"github.com/vasanthpandia/gojournal/internal/handlers"
-	"github.com/vasanthpandia/gojournal/internal/server"
+	"github.com/vasanthpandia/gojournal/server"
 )
 
 func main() {
