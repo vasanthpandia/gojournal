@@ -10,7 +10,7 @@ import (
 // type Payload struct {
 // }
 
-func BasicHandler(c *gin.Context) *gin.Handler {
+func BasicHandler(c *gin.Context) {
 	response := controllers.BasicController()
 
 	c.String(http.StatusOK, response)
