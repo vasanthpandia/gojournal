@@ -8,6 +8,7 @@ import(
 	"go.mongodb.org/mongo-driver/mongo"
 	// "go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.uber.org/zap"
 
 	"github.com/vasanthpandia/gojournal/internal/config"
 	"github.com/vasanthpandia/gojournal/internal/handlers"
@@ -28,6 +29,8 @@ func main() {
 	}
 
 	route := srv.Route
+
+	route.Use(setupLogger())
 
 	route.Use(setupControllers(client))
 	route.GET("/test", handlers.BasicHandler)
@@ -66,4 +69,14 @@ func getMongoClient(cfg *config.Config) (*mongo.Client, error){
 	fmt.Println("Connected to MongoDB!")
 
 	return client, nil
+}
+
+func setupLogger() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		logger, _ := zap.NewProduction()
+		defer logger.Sync()
+
+		c.Set("Logger", logger)
+		c.Next()
+	}
 }
