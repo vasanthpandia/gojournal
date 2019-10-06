@@ -12,9 +12,8 @@ func CreateUser(c *gin.Context) {
 	controller := c.MustGet("UsersController").(*controllers.UsersController)
 	logger := c.MustGet("Logger").(*zap.Logger)
 
-	var request *controllers.UserCreatePayload
-
-	err := c.BindJSON(request)
+	request := &controllers.UserCreatePayload{}
+	err := c.BindJSON(&request)
 
 	if err != nil {
 		logger.Error("Json Bind Error", zap.Error(err))
