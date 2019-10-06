@@ -13,5 +13,5 @@ import (
 func BasicHandler(c *gin.Context) *gin.Handler {
 	response := controllers.BasicController()
 
-	c.String(htt[.StatusOK, response])
+	c.String(http.StatusOK, response)
 }
