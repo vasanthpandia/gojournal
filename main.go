@@ -2,8 +2,8 @@ package main
 
 import(
 	"fmt"
-	"github.com/vasanthpandia/gojournal/handlers"
-	"github.com/vasanthpandia/gojournal/server"
+	"github.com/vasanthpandia/gojournal/internal/handlers"
+	"github.com/vasanthpandia/gojournal/internal/server"
 )
 
 func main() {
