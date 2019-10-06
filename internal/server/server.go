@@ -7,11 +7,12 @@ import(
 
 type Server struct {
 	engine *gin.Engine
-	handlers []*gin.Handler
 }
 
-func GetDefaultServer() *gin.Engine {
-	return gin.Default()
+func NewServer() *Server {
+	return  &Server {
+		engine: gin.Default()
+	}
 }
 
 func (srv *Server) Start() {
