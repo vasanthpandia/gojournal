@@ -17,3 +17,7 @@ type User struct {
 	UpdatedAt time.Time `json:"-" bson:"UpdatedAt"`
 	posts []Post
 }
+
+func (user *User)BuildPassword(password string) {
+	user.HashedPassword = password
+}

@@ -11,7 +11,7 @@ type Mongo struct {
 
 func InitDefaults() *Config {
 	mongo := Mongo {
-		Url: "localhost:27017",
+		Url: "mongodb://localhost:27017",
 		Database: "gojournal",
 	}
 
