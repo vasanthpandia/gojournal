@@ -1,8 +1,8 @@
 package main
 
-import(
-	"fmt"
+import (
 	"context"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -10,9 +10,9 @@ import(
 	"go.uber.org/zap"
 
 	"github.com/vasanthpandia/gojournal/internal/config"
+	"github.com/vasanthpandia/gojournal/internal/controllers"
 	"github.com/vasanthpandia/gojournal/internal/handlers"
 	"github.com/vasanthpandia/gojournal/internal/server"
-	"github.com/vasanthpandia/gojournal/internal/controllers"
 )
 
 func main() {
@@ -42,19 +42,19 @@ func main() {
 func setupControllers(client *mongo.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set("UsersController", &controllers.UsersController{
-			Client: client,
+			Client:     client,
 			Collection: "users",
 		})
 		c.Set("SessionsController", &controllers.SessionsController{
-			Client: client,
+			Client:     client,
 			Collection: "users",
-			JwtKey: []byte("DEFAULTKEY"),
+			JwtKey:     []byte("DEFAULTKEY"),
 		})
 		c.Next()
 	}
 }
 
-func getMongoClient(cfg *config.Config) (*mongo.Client, error){
+func getMongoClient(cfg *config.Config) (*mongo.Client, error) {
 	// Set client options
 	clientOptions := options.Client().ApplyURI(cfg.Mongo.Url)
 
