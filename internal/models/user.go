@@ -2,6 +2,9 @@ package models
 
 import (
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
+	"github.com/google/uuid"
 )
 
 type User struct {
@@ -18,6 +21,30 @@ type User struct {
 	posts []Post
 }
 
+func NewUser() *User {
+	now := time.Now()
+	return &User {
+		ID: uuid.New().String(),
+		Revision: 1,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+}
+
+func (user *User)Authenticate(password string) error {
+	return bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(password))
+}
+
 func (user *User)BuildPassword(password string) {
-	user.HashedPassword = password
+	user.HashedPassword = hashAndSalt([]byte(password))
+}
+
+func hashAndSalt(pwd []byte) string {
+	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
+	if err != nil {
+			return "NoPasswordGenerated"
+	}
+	// GenerateFromPassword returns a byte slice so we need to
+	// convert the bytes to a string and return it
+	return string(hash)
 }

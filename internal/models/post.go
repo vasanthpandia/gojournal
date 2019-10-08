@@ -2,6 +2,7 @@ package models
 
 import (
 	"time"
+	"github.com/google/uuid"
 )
 
 type Post struct {
@@ -12,4 +13,14 @@ type Post struct {
 	Revision int `json:"-" bson:"revision"`
 	CreatedAt time.Time `json:"-" bson:"createdAt"`
 	UpdatedAt time.Time `json:"-" bson:"UpdatedAt"`
+}
+
+func NewPost() *Post {
+	now := time.Now()
+	return &Post {
+		ID: uuid.New().String(),
+		Revision: 1,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
 }

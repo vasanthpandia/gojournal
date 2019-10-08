@@ -2,13 +2,11 @@ package controllers
 
 import (
 	"errors"
+	"context"
 	"github.com/vasanthpandia/gojournal/internal/models"
 	"go.mongodb.org/mongo-driver/mongo"
+	// "go.mongodb.org/mongo-driver/bson"
 )
-
-// type UsersControllerInterface interface {
-// 	Create(payload *UserCreatePayload) (*models.User, error)
-// }
 
 type UsersController struct {
 	Client *mongo.Client
@@ -33,14 +31,21 @@ func (uc *UsersController) Create(payload *UserCreatePayload) (*models.User, err
 		return nil, errors.New("Password Mismatch")
 	}
 
-	user := &models.User {
-		FirstName: payload.FirstName,
-		LastName: payload.LastName,
-		Username: payload.Username,
-		Email: payload.Email,
-	}
+	user := models.NewUser()
+	user.FirstName = payload.FirstName
+	user.LastName = payload.LastName
+	user.Username = payload.Username
+	user.Email = payload.Email
 
 	user.BuildPassword(payload.Password)
+
+	collection := uc.Client.Database("gojournal").Collection("users")
+
+	_, err := collection.InsertOne(context.TODO(), user)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return user, nil
 }
