@@ -2,11 +2,16 @@ package config
 
 type Config struct {
 	Mongo *Mongo
+	Token *Token
 }
 
 type Mongo struct {
 	Url string
 	Database string
+}
+
+type Token struct {
+	Key string
 }
 
 func InitDefaults() *Config {
@@ -15,7 +20,12 @@ func InitDefaults() *Config {
 		Database: "gojournal",
 	}
 
+	token := Token {
+		Key: "DEFAULTKEY",
+	}
+
 	return &Config {
 		Mongo: &mongo,
+		Token: &token,
 	}
 }

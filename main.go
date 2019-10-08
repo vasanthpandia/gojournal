@@ -35,6 +35,7 @@ func main() {
 	route.GET("/test", handlers.BasicHandler)
 	route.POST("/users", handlers.CreateUser)
 	route.GET("/users/:userId", handlers.GetUser)
+	route.POST("/login", handlers.Login)
 	srv.Start()
 }
 
@@ -43,6 +44,11 @@ func setupControllers(client *mongo.Client) gin.HandlerFunc {
 		c.Set("UsersController", &controllers.UsersController{
 			Client: client,
 			Collection: "users",
+		})
+		c.Set("SessionsController", &controllers.SessionsController{
+			Client: client,
+			Collection: "users",
+			JwtKey: []byte("DEFAULTKEY"),
 		})
 		c.Next()
 	}
