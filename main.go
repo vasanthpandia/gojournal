@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
+	"github.com/dgrijalva/jwt-go"
 
 	"github.com/vasanthpandia/gojournal/internal/config"
 	"github.com/vasanthpandia/gojournal/internal/controllers"
@@ -34,8 +35,9 @@ func main() {
 	route.Use(setupControllers(client))
 	route.GET("/test", handlers.BasicHandler)
 	route.POST("/users", handlers.CreateUser)
-	route.GET("/users/:userId", handlers.GetUser)
 	route.POST("/login", handlers.Login)
+	route.Use(RequireAuth())
+	route.GET("/users/:userId", handlers.GetUser)
 	srv.Start()
 }
 
@@ -84,5 +86,30 @@ func setupLogger() gin.HandlerFunc {
 
 		c.Set("Logger", logger)
 		c.Next()
+	}
+}
+
+func RequireAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		JwtKey := []byte("DEFAULTKEY")
+
+		logger := c.MustGet("Logger").(*zap.Logger)
+
+		tokenstr := c.Request.Header.Get("X-Authentication")
+
+		token, err := jwt.ParseWithClaims(tokenstr, &controllers.Claim{}, func(token *jwt.Token) (interface{}, error) {
+			return JwtKey, nil
+		})
+
+		if claims, ok := token.Claims.(*controllers.Claim); ok && token.Valid {
+			logger.Info("Token", zap.String("username", claims.Username))
+			fmt.Printf("%v %v", claims.Username, claims.StandardClaims.ExpiresAt)
+			c.Next()
+		} else {
+			fmt.Println(err)
+			logger.Error("Token Error", zap.Error(err))
+			c.JSON(403, "Token Expired")
+			c.Abort()
+		}
 	}
 }
