@@ -34,6 +34,7 @@ func main() {
 	route.Use(setupControllers(client))
 	route.GET("/test", handlers.BasicHandler)
 	route.POST("/users", handlers.CreateUser)
+	route.GET("/users/:userId", handlers.GetUser)
 	srv.Start()
 }
 

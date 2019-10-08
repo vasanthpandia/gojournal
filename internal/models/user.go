@@ -32,7 +32,7 @@ func NewUser() *User {
 }
 
 func (user *User)Authenticate(password string) error {
-	return bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(password))
+	return bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(password))
 }
 
 func (user *User)BuildPassword(password string) {

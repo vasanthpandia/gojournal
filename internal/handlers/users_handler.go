@@ -28,3 +28,19 @@ func CreateUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, user)
 }
+
+func GetUser(c *gin.Context) {
+	controller := c.MustGet("UsersController").(*controllers.UsersController)
+	logger := c.MustGet("Logger").(*zap.Logger)
+
+	userId := c.Param("userId")
+
+	user, err := controller.Read(userId)
+
+	if err != nil {
+		logger.Error("Fetch User Failed", zap.Error(err))
+		c.String(http.StatusInternalServerError, err.Error())
+	}
+
+	c.JSON(http.StatusOK, user)
+}

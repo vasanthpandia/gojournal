@@ -5,7 +5,7 @@ import (
 	"context"
 	"github.com/vasanthpandia/gojournal/internal/models"
 	"go.mongodb.org/mongo-driver/mongo"
-	// "go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type UsersController struct {
@@ -48,4 +48,19 @@ func (uc *UsersController) Create(payload *UserCreatePayload) (*models.User, err
 	}
 
 	return user, nil
+}
+
+func (uc *UsersController) Read(userId string) (*models.User, error) {
+	filter := bson.D{{ "_id", userId }}
+	var user models.User
+
+	collection := uc.Client.Database("gojournal").Collection("users")
+
+	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+
+	if err != nil {
+			return nil, err
+	}
+
+	return &user, nil
 }
