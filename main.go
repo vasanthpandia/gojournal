@@ -17,8 +17,6 @@ import (
 
 func main() {
 	cfg := config.InitDefaults()
-	// fmt.Println(cfg.Mongo.Url)
-	// fmt.Println(cfg.Mongo.Database)
 
 	srv := server.NewServer()
 	client, err := getDBClient(cfg)
@@ -35,8 +33,11 @@ func main() {
 	route.GET("/test", handlers.BasicHandler)
 	route.POST("/users", handlers.CreateUser)
 	route.POST("/login", handlers.Login)
-	route.Use(middleware.RequireAuth())
+	route.Use(middleware.RequireAuth(client))
 	route.GET("/users/:userId", handlers.GetUser)
+	route.POST("/posts", handlers.CreatePost)
+	route.GET("/posts/:postId", handlers.ReadPost)
+	route.DELETE("/posts/:postId", handlers.DeletePost)
 	srv.Start()
 }
 
@@ -50,6 +51,10 @@ func setupControllers(client *mongo.Client) gin.HandlerFunc {
 			Client:     client,
 			Collection: "users",
 			JwtKey:     []byte("DEFAULTKEY"),
+		})
+		c.Set("PostsController", &controllers.PostsController{
+			Client: client,
+			Collection: "posts",
 		})
 		c.Next()
 	}

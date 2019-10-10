@@ -2,14 +2,20 @@ package middleware
 
 import (
 	"fmt"
+	"context"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"github.com/dgrijalva/jwt-go"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/vasanthpandia/gojournal/internal/controllers"
+	"github.com/vasanthpandia/gojournal/internal/models"
 )
 
-func RequireAuth() gin.HandlerFunc {
+
+
+func RequireAuth(client *mongo.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		JwtKey := []byte("DEFAULTKEY")
 
@@ -23,7 +29,21 @@ func RequireAuth() gin.HandlerFunc {
 
 		if claims, ok := token.Claims.(*controllers.Claim); ok && token.Valid {
 			logger.Info("Token", zap.String("username", claims.Username))
-			fmt.Printf("%v %v", claims.Username, claims.StandardClaims.ExpiresAt)
+
+			filter := bson.D{{ "username", claims.Username }}
+			var user models.User
+
+			collection := client.Database("gojournal").Collection("users")
+
+			err := collection.FindOne(context.TODO(), filter).Decode(&user)
+			if err != nil {
+				c.JSON(400, gin.H{
+					"error" : "Invalid Token",
+				})
+				c.Abort()
+			}
+
+			c.Set("CurrentUser", &user)
 			c.Next()
 		} else {
 			fmt.Println(err)

@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/vasanthpandia/gojournal/internal/controllers"
+	"github.com/vasanthpandia/gojournal/internal/jsonerrors"
 )
 
 func CreateUser(c *gin.Context) {
@@ -17,13 +18,13 @@ func CreateUser(c *gin.Context) {
 
 	if err != nil {
 		logger.Error("Json Bind Error", zap.Error(err))
-		c.String(http.StatusInternalServerError, "Bind Failed")
+		c.JSON(http.StatusBadRequest, jsonerrors.New("Bad Request Body"))
 	}
 
 	user, err := controller.Create(request)
 
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, jsonerrors.New(err.Error()))
 	}
 
 	c.JSON(http.StatusOK, user)
@@ -39,7 +40,7 @@ func GetUser(c *gin.Context) {
 
 	if err != nil {
 		logger.Error("Fetch User Failed", zap.Error(err))
-		c.String(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, jsonerrors.New(err.Error()))
 	}
 
 	c.JSON(http.StatusOK, user)
