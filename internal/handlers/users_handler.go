@@ -18,13 +18,15 @@ func CreateUser(c *gin.Context) {
 
 	if err != nil {
 		logger.Error("Json Bind Error", zap.Error(err))
-		c.JSON(http.StatusBadRequest, jsonerrors.New("Bad Request Body"))
+		c.JSON(http.StatusBadRequest, jsonerrors.BadRequest)
+		return
 	}
 
 	user, err := controller.Create(request)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, jsonerrors.New(err.Error()))
+		return
 	}
 
 	c.JSON(http.StatusOK, user)

@@ -33,7 +33,7 @@ func CreatePost(c *gin.Context) {
 	if err != nil {
 		logger.Error("Error Creating Post", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, jsonerrors.New(err.Error()))
-		c.Abort()
+		return
 	}
 
 	c.JSON(http.StatusOK, post)
@@ -53,8 +53,8 @@ func ReadPost(c *gin.Context) {
 	post, err := controller.Read(request)
 	if err != nil {
 		logger.Error("Error Fetching Post", zap.Error(err))
-		c.JSON(http.StatusNotFound, jsonerrors.New("Post Not Found"))
-		c.Abort()
+		c.JSON(http.StatusNotFound, jsonerrors.ResourceNotFound)
+		return
 	}
 
 	c.JSON(http.StatusOK, post)
@@ -73,9 +73,9 @@ func DeletePost(c *gin.Context) {
 
 	err := controller.Delete(request)
 	if err != nil {
-		logger.Error("Error Creating Post", zap.Error(err))
-		c.JSON(http.StatusNotFound, jsonerrors.New("Post Not Found"))
-		c.Abort()
+		logger.Error("Error Deleting Post", zap.Error(err))
+		c.JSON(http.StatusNotFound, jsonerrors.ResourceNotFound)
+		return
 	}
 
 	c.JSON(http.StatusOK, nil)

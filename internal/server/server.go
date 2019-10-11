@@ -9,11 +9,13 @@ type Server struct {
 }
 
 func NewServer() *Server {
+	gin.SetMode(gin.ReleaseMode)
 	return  &Server {
 		Route: gin.Default(),
 	}
 }
 
 func (srv *Server) Start() {
+
 	srv.Route.Run()
 }
