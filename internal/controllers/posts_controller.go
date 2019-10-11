@@ -10,7 +10,7 @@ import (
 
 type PostsController struct {
 	Client *mongo.Client
-	Collection string
+	Collection *mongo.Collection
 }
 
 type PostCreatePayload struct {
@@ -40,10 +40,7 @@ func (pc *PostsController) Create(payload *PostCreatePayload) (*models.Post, err
 	post.Date = t
 	post.Text = payload.Text
 
-	collection := pc.Client.Database("gojournal").Collection("posts")
-
-	_, err = collection.InsertOne(context.TODO(), post)
-
+	_, err = pc.Collection.InsertOne(context.TODO(), post)
 	if err != nil {
 		return nil, err
 	}
@@ -52,13 +49,11 @@ func (pc *PostsController) Create(payload *PostCreatePayload) (*models.Post, err
 }
 
 func (pc *PostsController) Read(payload *PostReadPayload) (*models.Post, error) {
-	collection := pc.Client.Database("gojournal").Collection("posts")
 	var post models.Post
 
 	filter := bson.D{{"userId", payload.UserID}, {"_id", payload.ID}}
 
-	err := collection.FindOne(context.TODO(), filter).Decode(&post)
-
+	err := pc.Collection.FindOne(context.TODO(), filter).Decode(&post)
 	if err != nil {
 		return nil, err
 	}
@@ -67,11 +62,9 @@ func (pc *PostsController) Read(payload *PostReadPayload) (*models.Post, error) 
 }
 
 func (pc *PostsController) Delete(payload *PostDeletePayload) error {
-	collection := pc.Client.Database("gojournal").Collection("posts")
 	filter := bson.D{{"userId", payload.UserID}, {"_id", payload.ID}}
 
-	_, err := collection.DeleteOne(context.TODO(), filter)
-
+	_, err := pc.Collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return err
 	}

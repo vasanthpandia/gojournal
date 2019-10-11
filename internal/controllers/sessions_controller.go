@@ -21,8 +21,9 @@ type LoginPayload struct {
 
 type SessionsController struct {
 	Client *mongo.Client
-	Collection string
+	Collection *mongo.Collection
 	JwtKey []byte
+	Validity time.Duration
 }
 
 func (sc *SessionsController) fetchUser(payload *LoginPayload) (*models.User, error) {
@@ -54,7 +55,7 @@ func (sc *SessionsController) Login(payload *LoginPayload) (string, error) {
 
 	// Declare the expiration time of the token
 	// here, we have kept it as 5 minutes
-	expirationTime := time.Now().Add(5 * time.Minute)
+	expirationTime := time.Now().Add(sc.Validity)
 	// Create the JWT claims, which includes the username and expiry time
 	claims := &Claim {
 		Username: payload.Username,

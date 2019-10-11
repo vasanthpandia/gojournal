@@ -10,7 +10,7 @@ import (
 
 type UsersController struct {
 	Client *mongo.Client
-	Collection string
+	Collection *mongo.Collection
 }
 
 type UserCreatePayload struct {
@@ -39,10 +39,7 @@ func (uc *UsersController) Create(payload *UserCreatePayload) (*models.User, err
 
 	user.BuildPassword(payload.Password)
 
-	collection := uc.Client.Database("gojournal").Collection("users")
-
-	_, err := collection.InsertOne(context.TODO(), user)
-
+	_, err := uc.Collection.InsertOne(context.TODO(), user)
 	if err != nil {
 		return nil, err
 	}
@@ -54,9 +51,7 @@ func (uc *UsersController) Read(userId string) (*models.User, error) {
 	filter := bson.D{{ "_id", userId }}
 	var user models.User
 
-	collection := uc.Client.Database("gojournal").Collection("users")
-
-	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+	err := uc.Collection.FindOne(context.TODO(), filter).Decode(&user)
 
 	if err != nil {
 			return nil, err
