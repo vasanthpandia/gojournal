@@ -68,6 +68,10 @@ func (pc *PostsController) ReadMany(userID string) (*[]models.Post, error) {
 
 	cur, err := pc.Collection.Find(context.TODO(), filter)
 
+	if err != nil {
+		return nil, err
+	}
+
 	for cur.Next(context.TODO()) {
     // create a value into which the single document can be decoded
     var elem models.Post
@@ -79,9 +83,7 @@ func (pc *PostsController) ReadMany(userID string) (*[]models.Post, error) {
     posts = append(posts, elem)
 	}
 
-	if err != nil {
-		return nil, err
-	}
+	cur.Close(context.TODO())
 
 	return &posts, nil
 }
