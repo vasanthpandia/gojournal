@@ -25,6 +25,7 @@ func main() {
 
 	route.Use(middleware.RequireAuth(cfg))
 	route.GET("/users/:userId", handlers.GetUser)
+	route.GET("/posts", handlers.ReadPosts)
 	route.POST("/posts", handlers.CreatePost)
 	route.GET("/posts/:postId", handlers.ReadPost)
 	route.DELETE("/posts/:postId", handlers.DeletePost)

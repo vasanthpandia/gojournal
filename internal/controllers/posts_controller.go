@@ -61,6 +61,31 @@ func (pc *PostsController) Read(payload *PostReadPayload) (*models.Post, error) 
 	return &post, nil
 }
 
+func (pc *PostsController) ReadMany(userID string) (*[]models.Post, error) {
+	var posts []models.Post
+
+	filter := bson.D{{"userId", userID}}
+
+	cur, err := pc.Collection.Find(context.TODO(), filter)
+
+	for cur.Next(context.TODO()) {
+    // create a value into which the single document can be decoded
+    var elem models.Post
+    err := cur.Decode(&elem)
+    if err != nil {
+        return nil, err
+    }
+
+    posts = append(posts, elem)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &posts, nil
+}
+
 func (pc *PostsController) Delete(payload *PostDeletePayload) error {
 	filter := bson.D{{"userId", payload.UserID}, {"_id", payload.ID}}
 

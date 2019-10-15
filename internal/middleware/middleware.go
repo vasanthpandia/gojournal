@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"context"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -13,13 +12,17 @@ import (
 	"github.com/vasanthpandia/gojournal/internal/config"
 )
 
-
-
 func RequireAuth(cfg *config.ServerConfig) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		logger := c.MustGet("Logger").(*zap.Logger)
-
 		tokenstr := c.Request.Header.Get("X-Authentication")
+		if tokenstr == "" {
+			c.JSON(403, gin.H{
+				"error" : "Unauthorized",
+			})
+			c.Abort()
+			return
+		}
 
 		token, err := jwt.ParseWithClaims(tokenstr, &controllers.Claim{}, func(token *jwt.Token) (interface{}, error) {
 			return cfg.Token.Key, nil
@@ -30,7 +33,6 @@ func RequireAuth(cfg *config.ServerConfig) gin.HandlerFunc {
 
 			filter := bson.D{{ "username", claims.Username }}
 			var user models.User
-
 			collection := cfg.DBConnection.Database.Collection("users")
 
 			err := collection.FindOne(context.TODO(), filter).Decode(&user)
@@ -39,15 +41,16 @@ func RequireAuth(cfg *config.ServerConfig) gin.HandlerFunc {
 					"error" : "Invalid Token",
 				})
 				c.Abort()
+				return
 			}
 
 			c.Set("CurrentUser", &user)
 			c.Next()
 		} else {
-			fmt.Println(err)
 			logger.Error("Token Error", zap.Error(err))
 			c.JSON(403, "Token Expired")
 			c.Abort()
+			return
 		}
 	}
 }

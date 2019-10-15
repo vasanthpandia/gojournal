@@ -60,6 +60,23 @@ func ReadPost(c *gin.Context) {
 	c.JSON(http.StatusOK, post)
 }
 
+func ReadPosts(c *gin.Context) {
+	controller := c.MustGet("PostsController").(*controllers.PostsController)
+	logger := c.MustGet("Logger").(*zap.Logger)
+	currentUser := c.MustGet("CurrentUser").(*models.User)
+
+	logger.Info("Params : ", zap.String("UserId", currentUser.ID))
+
+	posts, err := controller.ReadMany(currentUser.ID)
+	if err != nil {
+		logger.Error("Error Fetching Post", zap.Error(err))
+		c.JSON(http.StatusNotFound, jsonerrors.ResourceNotFound)
+		return
+	}
+
+	c.JSON(http.StatusOK, posts)
+}
+
 func DeletePost(c *gin.Context) {
 	controller := c.MustGet("PostsController").(*controllers.PostsController)
 	logger := c.MustGet("Logger").(*zap.Logger)
