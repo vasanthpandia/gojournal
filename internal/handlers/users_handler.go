@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/vasanthpandia/gojournal/internal/controllers"
+	"github.com/vasanthpandia/gojournal/internal/models"
 	"github.com/vasanthpandia/gojournal/internal/jsonerrors"
 )
 
@@ -46,4 +47,10 @@ func GetUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, user)
+}
+
+func CurrentUser( c *gin.Context) {
+	currentUser := c.MustGet("CurrentUser").(*models.User)
+
+	c.JSON(http.StatusOK, currentUser)
 }

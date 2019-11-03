@@ -24,6 +24,7 @@ func main() {
 	route.POST("/login", handlers.Login)
 
 	route.Use(middleware.RequireAuth(cfg))
+	route.GET("/currentuser", handlers.CurrentUser)
 	route.GET("/users/:userId", handlers.GetUser)
 	route.GET("/posts", handlers.ReadPosts)
 	route.POST("/posts", handlers.CreatePost)
