@@ -1,6 +1,8 @@
 package models
 
+import "time"
+
 type AuthToken struct {
 	Token string `json:"token"`
-	ExpiresAt int64 `json:"expiresAt"`
+	ExpiresAt time.Time `json:"expiresAt"`
 }

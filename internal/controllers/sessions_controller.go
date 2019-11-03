@@ -57,13 +57,13 @@ func (sc *SessionsController) Login(payload *LoginPayload) (*models.AuthToken, e
 
 	// Declare the expiration time of the token
 	// here, we have kept it as 5 minutes
-	expirationTime := time.Now().Add(sc.Validity).Unix()
+	expirationTime := time.Now().Add(sc.Validity)
 	// Create the JWT claims, which includes the username and expiry time
 	claims := &Claim {
 		Username: payload.Username,
 		StandardClaims: jwt.StandardClaims{
 			// In JWT, the expiry time is expressed as unix milliseconds
-			ExpiresAt: expirationTime,
+			ExpiresAt: expirationTime.Unix(),
 		},
 	}
 
