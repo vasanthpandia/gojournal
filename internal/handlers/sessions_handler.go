@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/vasanthpandia/gojournal/internal/controllers"
+	"github.com/vasanthpandia/gojournal/internal/jsonerrors"
 )
 
 func Login(c *gin.Context) {
@@ -16,22 +17,16 @@ func Login(c *gin.Context) {
 
 	if err != nil {
 		logger.Error("Bind Error", zap.Error(err))
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		c.JSON(http.StatusBadRequest, jsonerrors.New("Bad Request Body"))
 	}
 
-	tokenstr, err := controller.Login(request)
+	authtoken, err := controller.Login(request)
 
 	if err != nil {
 		logger.Error("Bind Error", zap.Error(err))
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		c.JSON(http.StatusBadRequest, jsonerrors.New("Bad Request Body"))
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"token" : tokenstr,
-	})
+	c.JSON(http.StatusOK, authtoken)
 
 }

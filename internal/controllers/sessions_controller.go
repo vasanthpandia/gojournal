@@ -41,27 +41,29 @@ func (sc *SessionsController) fetchUser(payload *LoginPayload) (*models.User, er
 	return &user, nil
 }
 
-func (sc *SessionsController) Login(payload *LoginPayload) (string, error) {
+func (sc *SessionsController) Login(payload *LoginPayload) (*models.AuthToken, error) {
+
+	authToken := &models.AuthToken{}
 
 	user, err := sc.fetchUser(payload)
 
 	if err != nil {
-		return "", err
+		return authToken, err
 	}
 
 	if user.Authenticate(payload.Password) != nil {
-		return "", err
+		return authToken, err
 	}
 
 	// Declare the expiration time of the token
 	// here, we have kept it as 5 minutes
-	expirationTime := time.Now().Add(sc.Validity)
+	expirationTime := time.Now().Add(sc.Validity).Unix()
 	// Create the JWT claims, which includes the username and expiry time
 	claims := &Claim {
 		Username: payload.Username,
 		StandardClaims: jwt.StandardClaims{
 			// In JWT, the expiry time is expressed as unix milliseconds
-			ExpiresAt: expirationTime.Unix(),
+			ExpiresAt: expirationTime,
 		},
 	}
 
@@ -71,8 +73,11 @@ func (sc *SessionsController) Login(payload *LoginPayload) (string, error) {
 	tokenString, err := token.SignedString([]byte(sc.JwtKey))
 
 	if err != nil {
-		return "", err
+		return authToken, err
 	}
 
-	return tokenString, nil
+	authToken.Token = tokenString
+	authToken.ExpiresAt = expirationTime
+
+	return authToken, nil
 }
