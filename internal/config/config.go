@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"time"
 	"os"
 )
@@ -68,6 +69,8 @@ func GetServerConfig() *ServerConfig {
 
 	env := os.Getenv("env")
 
+	fmt.Println(env);
+
 	var config *Config
 
 	if env == "development" {
@@ -75,6 +78,8 @@ func GetServerConfig() *ServerConfig {
 	} else {
 		config = getConfigFor(env)
 	}
+
+	logConfig(config)
 
 	connection, err := GetMongoConnection(config.MongoConfig)
 	if err != nil {
@@ -85,4 +90,11 @@ func GetServerConfig() *ServerConfig {
 	srvConfig.Token = config.Token
 
 	return srvConfig
+}
+
+func logConfig(config *Config) {
+	fmt.Println("MongoUrl : ", config.MongoConfig.Url)
+	fmt.Println("Database : ", config.MongoConfig.Database)
+	fmt.Println("Token_Expiry : ", config.Token.Validity)
+	fmt.Println("Token_Key : ", config.Token.Key)
 }
