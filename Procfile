@@ -1,1 +1,1 @@
-web: bin/gojournal
+web: bin/gojournal -env production
