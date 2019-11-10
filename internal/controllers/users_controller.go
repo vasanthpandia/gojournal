@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"errors"
 	"context"
 	"github.com/vasanthpandia/gojournal/internal/models"
@@ -41,6 +42,7 @@ func (uc *UsersController) Create(payload *UserCreatePayload) (*models.User, err
 
 	_, err := uc.Collection.InsertOne(context.TODO(), user)
 	if err != nil {
+		fmt.Println(err.Error())
 		return nil, err
 	}
 

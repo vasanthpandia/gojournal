@@ -26,6 +26,7 @@ func CreateUser(c *gin.Context) {
 	user, err := controller.Create(request)
 
 	if err != nil {
+		logger.Error("Unknown Error", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, jsonerrors.New(err.Error()))
 		return
 	}
