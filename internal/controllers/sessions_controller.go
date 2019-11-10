@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"time"
+	"errors"
 	"github.com/vasanthpandia/gojournal/internal/models"
 	"github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -30,9 +31,7 @@ func (sc *SessionsController) fetchUser(payload *LoginPayload) (*models.User, er
 	filter := bson.D{{ "username", payload.Username }}
 	var user models.User
 
-	collection := sc.Client.Database("gojournal").Collection("users")
-
-	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+	err := sc.Collection.FindOne(context.TODO(), filter).Decode(&user)
 
 	if err != nil {
 		return nil, err
@@ -43,16 +42,15 @@ func (sc *SessionsController) fetchUser(payload *LoginPayload) (*models.User, er
 
 func (sc *SessionsController) Login(payload *LoginPayload) (*models.AuthToken, error) {
 
-	authToken := &models.AuthToken{}
 
 	user, err := sc.fetchUser(payload)
 
 	if err != nil {
-		return authToken, err
+		return nil, err
 	}
 
 	if user.Authenticate(payload.Password) != nil {
-		return authToken, err
+		return nil, errors.New("Login Failed: Username and Password does not match")
 	}
 
 	// Declare the expiration time of the token
@@ -73,11 +71,13 @@ func (sc *SessionsController) Login(payload *LoginPayload) (*models.AuthToken, e
 	tokenString, err := token.SignedString([]byte(sc.JwtKey))
 
 	if err != nil {
-		return authToken, err
+		return nil, err
 	}
 
-	authToken.Token = tokenString
-	authToken.ExpiresAt = expirationTime
+	authToken := &models.AuthToken {
+		Token: tokenString,
+		ExpiresAt: expirationTime,
+	}
 
 	return authToken, nil
 }
