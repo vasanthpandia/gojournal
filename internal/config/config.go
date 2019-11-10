@@ -2,6 +2,7 @@ package config
 
 import (
 	"time"
+	"os"
 )
 
 type Config struct {
@@ -44,8 +45,22 @@ func InitDefaults() *Config {
 }
 
 func getConfigFor(env string) *Config {
-	//TODO - Fetch config from appropriate toml file
-	return &Config{}
+	mConfig := MongoConfig {
+		Url: os.Getenv("DB_URL"),
+		Database: os.Getenv("DB_NAME"),
+	}
+
+	dur, _ := time.ParseDuration(os.Getenv("TOKEN_EXPIRY"))
+
+	token := Token {
+		Key: []byte(os.Getenv("JWT_KEY")),
+		Validity: dur,
+	}
+
+	return &Config {
+		MongoConfig: &mConfig,
+		Token: &token,
+	}
 }
 
 func GetServerConfig(env string) *ServerConfig {

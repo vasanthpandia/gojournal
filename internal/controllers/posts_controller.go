@@ -17,6 +17,7 @@ type PostCreatePayload struct {
 	UserID string `json:"userId"`
 	Date string `json:"date"`
 	Text string `json:"text"`
+	Title string `json:"text"`
 }
 
 type PostReadPayload struct {
@@ -39,6 +40,7 @@ func (pc *PostsController) Create(payload *PostCreatePayload) (*models.Post, err
 	}
 	post.Date = t
 	post.Text = payload.Text
+	post.Title = payload.Title
 
 	_, err = pc.Collection.InsertOne(context.TODO(), post)
 	if err != nil {
