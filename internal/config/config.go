@@ -63,8 +63,10 @@ func getConfigFor(env string) *Config {
 	}
 }
 
-func GetServerConfig(env string) *ServerConfig {
+func GetServerConfig() *ServerConfig {
 	srvConfig := &ServerConfig {}
+
+	env := os.Getenv("env")
 
 	var config *Config
 

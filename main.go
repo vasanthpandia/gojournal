@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"github.com/gin-gonic/gin"
 
 	"github.com/vasanthpandia/gojournal/internal/config"
@@ -12,9 +11,7 @@ import (
 )
 
 func main() {
-	var flagEnv = flag.String("env", "development", "Set the App Environment")
-	env := *flagEnv
-	cfg := config.GetServerConfig(env)
+	cfg := config.GetServerConfig()
 
 	srv := server.NewServer()
 	route := srv.Route
