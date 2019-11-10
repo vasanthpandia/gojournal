@@ -29,7 +29,7 @@ func GetMongoConnection(config *MongoConfig) (*MongoConnection, error) {
 		fmt.Println(err)
 	}
 
-	database := client.Database("gojournal")
+	database := client.Database(config.Database)
 
 	fmt.Println("Connected to MongoDB!")
 
