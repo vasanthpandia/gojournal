@@ -2,32 +2,32 @@ package controllers
 
 import (
 	"context"
-	"time"
 	"github.com/vasanthpandia/gojournal/internal/models"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type PostsController struct {
-	Client *mongo.Client
+	Client     *mongo.Client
 	Collection *mongo.Collection
 }
 
 type PostCreatePayload struct {
 	UserID string `json:"userId"`
-	Date string `json:"date"`
-	Text string `json:"text"`
-	Title string `json:"text"`
+	Date   string `json:"date"`
+	Text   string `json:"text"`
+	Title  string `json:"text"`
 }
 
 type PostReadPayload struct {
 	UserID string `json:"userId"`
-	ID string `json:"id"`
+	ID     string `json:"id"`
 }
 
 type PostDeletePayload struct {
 	UserID string `json:"userId"`
-	ID string `json:"id"`
+	ID     string `json:"id"`
 }
 
 func (pc *PostsController) Create(payload *PostCreatePayload) (*models.Post, error) {
@@ -75,14 +75,14 @@ func (pc *PostsController) ReadMany(userID string) (*[]models.Post, error) {
 	}
 
 	for cur.Next(context.TODO()) {
-    // create a value into which the single document can be decoded
-    var elem models.Post
-    err := cur.Decode(&elem)
-    if err != nil {
-        return nil, err
-    }
+		// create a value into which the single document can be decoded
+		var elem models.Post
+		err := cur.Decode(&elem)
+		if err != nil {
+			return nil, err
+		}
 
-    posts = append(posts, elem)
+		posts = append(posts, elem)
 	}
 
 	cur.Close(context.TODO())

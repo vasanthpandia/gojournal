@@ -1,4 +1,3 @@
-
 package jsonerrors
 
 type Error struct {
@@ -6,16 +5,16 @@ type Error struct {
 }
 
 func New(msg string) Error {
-	jerr := Error {
+	jerr := Error{
 		Message: msg,
 	}
 	return jerr
 }
 
-var ResourceNotFound Error = Error {
+var ResourceNotFound Error = Error{
 	Message: "Resource Not Found",
 }
 
-var BadRequest Error = Error {
+var BadRequest Error = Error{
 	Message: "Bad Request",
 }

@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"net/http"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"net/http"
 
 	"github.com/vasanthpandia/gojournal/internal/controllers"
-	"github.com/vasanthpandia/gojournal/internal/models"
 	"github.com/vasanthpandia/gojournal/internal/jsonerrors"
+	"github.com/vasanthpandia/gojournal/internal/models"
 )
 
 func CreateUser(c *gin.Context) {
@@ -50,7 +50,7 @@ func GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-func CurrentUser( c *gin.Context) {
+func CurrentUser(c *gin.Context) {
 	currentUser := c.MustGet("CurrentUser").(*models.User)
 
 	c.JSON(http.StatusOK, currentUser)

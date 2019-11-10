@@ -1,25 +1,25 @@
 package controllers
 
 import (
-	"fmt"
-	"errors"
 	"context"
+	"errors"
+	"fmt"
 	"github.com/vasanthpandia/gojournal/internal/models"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type UsersController struct {
-	Client *mongo.Client
+	Client     *mongo.Client
 	Collection *mongo.Collection
 }
 
 type UserCreatePayload struct {
-	FirstName string `json:"firstName"`
-	LastName string `json:"lastName"`
-	Username string `json:"username"`
-	Email string `json:"email"`
-	Password string `json:"password"`
+	FirstName            string `json:"firstName"`
+	LastName             string `json:"lastName"`
+	Username             string `json:"username"`
+	Email                string `json:"email"`
+	Password             string `json:"password"`
 	PasswordConfirmation string `json:"passwordConfirmation"`
 }
 
@@ -50,13 +50,13 @@ func (uc *UsersController) Create(payload *UserCreatePayload) (*models.User, err
 }
 
 func (uc *UsersController) Read(userId string) (*models.User, error) {
-	filter := bson.D{{ "_id", userId }}
+	filter := bson.D{{"_id", userId}}
 	var user models.User
 
 	err := uc.Collection.FindOne(context.TODO(), filter).Decode(&user)
 
 	if err != nil {
-			return nil, err
+		return nil, err
 	}
 
 	return &user, nil

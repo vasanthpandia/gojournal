@@ -2,74 +2,74 @@ package config
 
 import (
 	"fmt"
-	"time"
 	"os"
+	"time"
 )
 
 type Config struct {
 	MongoConfig *MongoConfig
-	Token *Token
+	Token       *Token
 }
 
 type MongoConfig struct {
-	Url string
+	Url      string
 	Database string
 }
 
 type Token struct {
-	Key []byte
+	Key      []byte
 	Validity time.Duration
 }
 
 type ServerConfig struct {
 	DBConnection *MongoConnection
-	Token	*Token
+	Token        *Token
 }
 
 func InitDefaults() *Config {
-	mConfig := MongoConfig {
-		Url: "mongodb://localhost:27017",
+	mConfig := MongoConfig{
+		Url:      "mongodb://localhost:27017",
 		Database: "gojournal",
 	}
 
 	dur, _ := time.ParseDuration("24h")
 
-	token := Token {
-		Key: []byte("DEFAULTKEY"),
+	token := Token{
+		Key:      []byte("DEFAULTKEY"),
 		Validity: dur,
 	}
 
-	return &Config {
+	return &Config{
 		MongoConfig: &mConfig,
-		Token: &token,
+		Token:       &token,
 	}
 }
 
 func getConfigFor(env string) *Config {
-	mConfig := MongoConfig {
-		Url: os.Getenv("MONGODB_URI"),
+	mConfig := MongoConfig{
+		Url:      os.Getenv("MONGODB_URI"),
 		Database: os.Getenv("DB_NAME"),
 	}
 
 	dur, _ := time.ParseDuration(os.Getenv("TOKEN_EXPIRY"))
 
-	token := Token {
-		Key: []byte(os.Getenv("JWT_KEY")),
+	token := Token{
+		Key:      []byte(os.Getenv("JWT_KEY")),
 		Validity: dur,
 	}
 
-	return &Config {
+	return &Config{
 		MongoConfig: &mConfig,
-		Token: &token,
+		Token:       &token,
 	}
 }
 
 func GetServerConfig() *ServerConfig {
-	srvConfig := &ServerConfig {}
+	srvConfig := &ServerConfig{}
 
 	env := os.Getenv("env")
 
-	fmt.Println(env);
+	fmt.Println(env)
 
 	var config *Config
 
@@ -78,8 +78,6 @@ func GetServerConfig() *ServerConfig {
 	} else {
 		config = getConfigFor(env)
 	}
-
-	logConfig(config)
 
 	connection, err := GetMongoConnection(config.MongoConfig)
 	if err != nil {

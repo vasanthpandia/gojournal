@@ -8,7 +8,7 @@ import (
 )
 
 type MongoConnection struct {
-	Client *mongo.Client
+	Client   *mongo.Client
 	Database *mongo.Database
 }
 
@@ -33,8 +33,8 @@ func GetMongoConnection(config *MongoConfig) (*MongoConnection, error) {
 
 	fmt.Println("Connected to MongoDB!")
 
-	connection := &MongoConnection {
-		Client: client,
+	connection := &MongoConnection{
+		Client:   client,
 		Database: database,
 	}
 

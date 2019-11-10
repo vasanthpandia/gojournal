@@ -2,14 +2,14 @@ package middleware
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.uber.org/zap"
 
+	"github.com/vasanthpandia/gojournal/internal/config"
 	"github.com/vasanthpandia/gojournal/internal/controllers"
 	"github.com/vasanthpandia/gojournal/internal/models"
-	"github.com/vasanthpandia/gojournal/internal/config"
 )
 
 func RequireAuth(cfg *config.ServerConfig) gin.HandlerFunc {
@@ -18,7 +18,7 @@ func RequireAuth(cfg *config.ServerConfig) gin.HandlerFunc {
 		tokenstr := c.Request.Header.Get("X-Authentication")
 		if tokenstr == "" {
 			c.JSON(403, gin.H{
-				"error" : "Unauthorized",
+				"error": "Unauthorized",
 			})
 			c.Abort()
 			return
@@ -31,14 +31,14 @@ func RequireAuth(cfg *config.ServerConfig) gin.HandlerFunc {
 		if claims, ok := token.Claims.(*controllers.Claim); ok && token.Valid {
 			logger.Info("Token", zap.String("username", claims.Username))
 
-			filter := bson.D{{ "username", claims.Username }}
+			filter := bson.D{{"username", claims.Username}}
 			var user models.User
 			collection := cfg.DBConnection.Database.Collection("users")
 
 			err := collection.FindOne(context.TODO(), filter).Decode(&user)
 			if err != nil {
 				c.JSON(400, gin.H{
-					"error" : "Invalid Token",
+					"error": "Invalid Token",
 				})
 				c.Abort()
 				return

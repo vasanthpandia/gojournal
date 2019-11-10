@@ -2,12 +2,12 @@ package controllers
 
 import (
 	"context"
-	"time"
 	"errors"
-	"github.com/vasanthpandia/gojournal/internal/models"
 	"github.com/dgrijalva/jwt-go"
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/vasanthpandia/gojournal/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type Claim struct {
@@ -21,14 +21,14 @@ type LoginPayload struct {
 }
 
 type SessionsController struct {
-	Client *mongo.Client
+	Client     *mongo.Client
 	Collection *mongo.Collection
-	JwtKey []byte
-	Validity time.Duration
+	JwtKey     []byte
+	Validity   time.Duration
 }
 
 func (sc *SessionsController) fetchUser(payload *LoginPayload) (*models.User, error) {
-	filter := bson.D{{ "username", payload.Username }}
+	filter := bson.D{{"username", payload.Username}}
 	var user models.User
 
 	err := sc.Collection.FindOne(context.TODO(), filter).Decode(&user)
@@ -41,7 +41,6 @@ func (sc *SessionsController) fetchUser(payload *LoginPayload) (*models.User, er
 }
 
 func (sc *SessionsController) Login(payload *LoginPayload) (*models.AuthToken, error) {
-
 
 	user, err := sc.fetchUser(payload)
 
@@ -57,7 +56,7 @@ func (sc *SessionsController) Login(payload *LoginPayload) (*models.AuthToken, e
 	// here, we have kept it as 5 minutes
 	expirationTime := time.Now().Add(sc.Validity)
 	// Create the JWT claims, which includes the username and expiry time
-	claims := &Claim {
+	claims := &Claim{
 		Username: payload.Username,
 		StandardClaims: jwt.StandardClaims{
 			// In JWT, the expiry time is expressed as unix milliseconds
@@ -74,8 +73,8 @@ func (sc *SessionsController) Login(payload *LoginPayload) (*models.AuthToken, e
 		return nil, err
 	}
 
-	authToken := &models.AuthToken {
-		Token: tokenString,
+	authToken := &models.AuthToken{
+		Token:     tokenString,
 		ExpiresAt: expirationTime,
 	}
 

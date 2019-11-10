@@ -1,6 +1,6 @@
 package server
 
-import(
+import (
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,7 +9,7 @@ type Server struct {
 }
 
 func NewServer() *Server {
-	return  &Server {
+	return &Server{
 		Route: gin.Default(),
 	}
 }

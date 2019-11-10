@@ -1,15 +1,14 @@
 package handlers
 
 import (
-	"net/http"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"net/http"
 
 	"github.com/vasanthpandia/gojournal/internal/controllers"
-	"github.com/vasanthpandia/gojournal/internal/models"
 	"github.com/vasanthpandia/gojournal/internal/jsonerrors"
+	"github.com/vasanthpandia/gojournal/internal/models"
 )
-
 
 func CreatePost(c *gin.Context) {
 	controller := c.MustGet("PostsController").(*controllers.PostsController)
