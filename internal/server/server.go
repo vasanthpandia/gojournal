@@ -8,11 +8,7 @@ type Server struct {
 	Route *gin.Engine
 }
 
-func NewServer(mode string) *Server {
-	if mode != "development" {
-		gin.SetMode(gin.ReleaseMode)
-	}
-
+func NewServer() *Server {
 	return  &Server {
 		Route: gin.Default(),
 	}

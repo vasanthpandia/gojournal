@@ -46,7 +46,7 @@ func InitDefaults() *Config {
 
 func getConfigFor(env string) *Config {
 	mConfig := MongoConfig {
-		Url: os.Getenv("DB_URL"),
+		Url: os.Getenv("MONGODB_URI"),
 		Database: os.Getenv("DB_NAME"),
 	}
 

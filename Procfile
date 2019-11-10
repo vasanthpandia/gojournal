@@ -1,1 +1,1 @@
-web: bin/gojournal -env release
+web: bin/gojournal

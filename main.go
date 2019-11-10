@@ -16,7 +16,7 @@ func main() {
 	env := *flagEnv
 	cfg := config.GetServerConfig(env)
 
-	srv := server.NewServer(env)
+	srv := server.NewServer()
 	route := srv.Route
 
 	route.Use(middleware.SetupLogger())
