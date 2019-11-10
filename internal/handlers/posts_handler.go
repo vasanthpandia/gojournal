@@ -25,7 +25,7 @@ func CreatePost(c *gin.Context) {
 
 	request.UserID = currentUser.ID
 
-	logger.Info("Post Create Payload", zap.String("text : ", request.Text))
+	logger.Info("Post Create Payload", zap.String("text : ", request.Text), zap.String("title : ", request.Title))
 
 	post, err := controller.Create(request)
 

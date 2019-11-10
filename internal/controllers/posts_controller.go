@@ -17,7 +17,7 @@ type PostCreatePayload struct {
 	UserID string `json:"userId"`
 	Date   string `json:"date"`
 	Text   string `json:"text"`
-	Title  string `json:"text"`
+	Title  string `json:"title"`
 }
 
 type PostReadPayload struct {
